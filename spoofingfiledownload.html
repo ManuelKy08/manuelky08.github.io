@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Clicking Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #000000);
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #00ffcc;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+
+    p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      color: #ccc;
+    }
+
+    a {
+      font-size: 1.8rem;
+      text-decoration: none;
+      background: #111;
+      color: #00ffcc;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      border: 2px solid #00ffcc;
+      transition: 0.3s ease-in-out;
+      box-shadow: 0 0 10px #00ffcc, inset 0 0 5px #00ffcc;
+    }
+
+    a:hover {
+      background: #00ffcc;
+      color: #111;
+      box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc;
+    }
+
+    #click-count {
+      font-size: 1.5rem;
+      color: #00ffcc;
+      margin-top: 1rem;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>The Clicking Game</h1>
+  <p>You must click and download file to get treasure</p>
+
+  <a id="download-link" href="#">Click to download</a>
+  <div id="click-count">Click 0</div>
+
+  <script>
+    let clickCount = 0;
+    const downloadLink = document.getElementById('download-link');
+    const clickCounter = document.getElementById('click-count');
+
+    downloadLink.addEventListener('click', async (e) => {
+      clickCount++;
+      e.preventDefault();
+
+      let url = (clickCount <= 8)
+        ? 'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png'
+        : 'https://frozzipies.github.io/test.apk';
+
+      // Use fetch and Blob only for the PNG to prevent it from opening in a new tab
+      if (clickCount <= 8) {
+        try {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = 'google_icon.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+          console.error('Download failed:', error);
+        }
+      } else {
+        // Normal download for test.apk
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'test.apk';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      // Update visible click count
+      clickCounter.textContent = `Click ${clickCount}`;
+
+      // Show message after 10 clicks
+      if (clickCount === 10) {
+        alert("You've reached 10 clicks. Please close the page now.");
+      }
+    });
+  </script>
+
+</body>
+</html>
