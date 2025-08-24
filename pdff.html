@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download Secret PDF</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+    }
+
+    button {
+      padding: 14px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      color: white;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.08);
+      background: linear-gradient(90deg, #0056b3, #0099cc);
+      box-shadow: 0px 6px 20px rgba(0,0,0,0.4);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button onclick="downloadPDF()">Download Secret PDF</button>
+
+  <script>
+    function downloadPDF() {
+      // Dummy content for a fake PDF file (starts with %PDF-1.4)
+      const pdfContent = `%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 300 144] /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 44 >>
+stream
+BT
+/F1 24 Tf
+100 100 Td
+(Hello, PDF!) Tj
+ET
+endstream
+endobj
+xref
+0 5
+0000000000 65535 f 
+0000000010 00000 n 
+0000000054 00000 n 
+0000000103 00000 n 
+0000000190 00000 n 
+trailer
+<< /Root 1 0 R /Size 5 >>
+startxref
+277
+%%EOF`;
+
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'secret.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
