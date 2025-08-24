@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Access on Click</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+    #red-square {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="red-square"></div>
+  
+  <script>
+    const redSquare = document.getElementById("red-square");
+
+    redSquare.addEventListener("click", () => {
+      requestCameraAccess();
+    });
+
+    function requestCameraAccess() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          alert("Camera access granted!");
+          stream.getTracks().forEach(track => track.stop()); // Stop camera stream
+        })
+        .catch((error) => {
+          alert("Camera access denied or not available.");
+          console.error("Error accessing camera:", error);
+        });
+    }
+  </script>
+  <h1>Click the red button</h1>
+</body>
+</html>
