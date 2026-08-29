@@ -1,0 +1,7 @@
+name = "manuelky"
+main = "worker.js"
+compatibility_date = "2025-10-01"
+
+# Cloudflare Workers AI (free tier) — binding dipakai di worker.js via env.AI
+[ai]
+binding = "AI"

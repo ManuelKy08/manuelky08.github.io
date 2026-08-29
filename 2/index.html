@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────────────────
+  Risky Manuel Tamba — Portfolio (Bug Bounty Hunter / Security Researcher)
+  ─────────────────────────────────────────────────────────────────────────────
+  DEPLOY:
+    • GitHub Pages → push folder ini ke repo lalu aktifkan Pages di Settings.
+    • Local       → cukup buka index.html di browser (file://), semua jalan offline.
+
+  CHAT AI WIDGET:
+    • Widget ada di file ini (bagian bawah <body>) — diambil dari chat-widget.html.
+    • Backend ada di worker.js (Cloudflare Worker). Deploy worker itu,
+      set secret ANTHROPIC_API_KEY di dashboard Cloudflare,
+      lalu pastikan WORKER_URL di script.js menunjuk worker kamu.
+    • API key TIDAK pernah ada di file frontend ini.
+
+  FILE: index.html + style.css + script.js + profile.jpg (semua self-contained)
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Risky Manuel Tamba — Bug Bounty Hunter &amp; Security Researcher</title>
+  <meta name="description" content="Risky Manuel Tamba — bug bounty hunter & security researcher from Jakarta, Indonesia. Web exploitation, recon & OSINT, responsible disclosure." />
+  <meta property="og:title" content="Risky Manuel Tamba — Bug Bounty Hunter" />
+  <meta property="og:description" content="Security researcher focused on web application security & bug bounty hunting." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="profile.jpg" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Ctext x='7' y='23' font-family='monospace' font-size='18' font-weight='bold' fill='%2316a34a'%3E%26gt;_%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="Home"><span class="brand-symbol">></span>_</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">about</a></li>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+      <button class="nav-burger" id="nav-burger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="home">
+    <div class="hero-grid">
+      <div class="reveal">
+        <div class="term">
+          <div class="term-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-title">risky@rr-sec: ~/whoami.txt</span>
+          </div>
+          <div class="term-body" id="terminal" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="hero-profile reveal">
+        <div class="photo-frame">
+          <img src="profile.jpg" alt="Portrait of Risky Manuel Tamba" width="750" height="750" />
+          <span class="scanlines" aria-hidden="true"></span>
+        </div>
+        <p class="alias">// manuelky08 · risky-manuel · kikikokok</p>
+        <h1 class="name">Risky Manuel <em>Tamba</em></h1>
+        <p class="role">Bug Bounty Hunter <span class="slash">/</span> Security Researcher</p>
+        <p class="location">Jakarta, Indonesia · +62</p>
+        <ul class="chips">
+          <li>NODE:ACTIVE</li>
+          <li>ENC:AES-256</li>
+          <li>SIG:STRONG</li>
+          <li>VPN:ON</li>
+          <li>SECURE</li>
+        </ul>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#about" aria-label="Scroll to about">scroll ↓</a>
+  </header>
+
+  <main>
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="hash">#</span> about<span class="caret-line"></span></h2>
+        <div class="about-grid reveal">
+          <div>
+            <p class="about-text">
+              Security researcher based in Jakarta, focused on web application security and
+              bug bounty hunting. I work through the full testing cycle — recon, enumeration,
+              exploitation, and responsible disclosure — and I write findings as reports that
+              are clear, reproducible, and actionable.
+            </p>
+            <p class="about-text">
+              I like to work alone and I love tech. Solitude is true freedom.
+            </p>
+          </div>
+          <div class="about-meta">
+            <div class="kv-row"><span class="kv-key">location</span><span class="kv-val">-6.2088°, 106.8456° — Jakarta</span></div>
+            <div class="kv-row"><span class="kv-key">focus</span><span class="kv-val">web security · red team</span></div>
+            <div class="kv-row"><span class="kv-key">status</span><span class="kv-val green">available for bounty programs</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="hash">#</span> skills<span class="caret-line"></span></h2>
+        <div class="skills-grid">
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man web-exploitation</h3>
+            <ul class="tag-list">
+              <li>XSS</li>
+              <li>SQL Injection</li>
+              <li>SSRF</li>
+              <li>IDOR</li>
+              <li>Auth Flaws</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man recon-osint</h3>
+            <ul class="tag-list">
+              <li>Subdomain Enumeration</li>
+              <li>Port Scanning</li>
+              <li>Google Dorking</li>
+              <li>Shodan</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man tooling</h3>
+            <ul class="tag-list">
+              <li>Burp Suite</li>
+              <li>Nmap</li>
+              <li>ffuf</li>
+              <li>nuclei</li>
+              <li>sqlmap</li>
+              <li>John</li>
+              <li>Wireshark</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man scripting</h3>
+            <ul class="tag-list">
+              <li>Python</li>
+              <li>Bash</li>
+              <li>JavaScript</li>
+              <li>PHP</li>
+              <li>SQL</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man methodology</h3>
+            <ul class="tag-list">
+              <li>OWASP Top 10</li>
+              <li>CVE Research</li>
+              <li>Responsible Disclosure</li>
+              <li>Report Writing</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="hash">#</span> projects<span class="caret-line"></span></h2>
+        <div class="projects-grid">
+          <article class="project-card reveal">
+            <h3 class="project-name">Recon Automation Scripts</h3>
+            <p class="project-desc">
+              Python scripts that automate the boring parts of recon — subdomain
+              enumeration, live-host probing, and initial fingerprinting — so the
+              manual review pass can focus on what matters.
+            </p>
+            <ul class="tag-list"><li>python</li><li>recon</li><li>automation</li></ul>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+          <article class="project-card reveal">
+            <h3 class="project-name">Web Vuln Lab</h3>
+            <p class="project-desc">
+              Intentionally vulnerable web environment built with Docker for safe,
+              hands-on practice across the OWASP Top 10 — from injection flaws to
+              broken access control.
+            </p>
+            <ul class="tag-list"><li>docker</li><li>owasp</li><li>lab</li></ul>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+          <article class="project-card reveal">
+            <h3 class="project-name">CVE Writeups</h3>
+            <p class="project-desc">
+              Deep-dives on published CVEs — root cause, impact, and mitigation —
+              written to make vulnerability research approachable for anyone
+              starting out in security.
+            </p>
+            <ul class="tag-list"><li>cve</li><li>research</li><li>writing</li></ul>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="hash">#</span> contact<span class="caret-line"></span></h2>
+        <p class="contact-note reveal">// open for collaboration, bounty programs &amp; security work</p>
+        <div class="contact-grid">
+          <a class="contact-card reveal" href="mailto:riskymanuel08@proton.me">
+            <span class="cc-label">EMAIL</span>
+            <span class="cc-value">riskymanuel08@proton.me</span>
+          </a>
+          <a class="contact-card reveal" href="https://instagram.com/risky.manuel" target="_blank" rel="noopener">
+            <span class="cc-label">INSTAGRAM</span>
+            <span class="cc-value">@risky.manuel</span>
+          </a>
+          <a class="contact-card reveal" href="https://www.linkedin.com/in/risky-manuel/" target="_blank" rel="noopener">
+            <span class="cc-label">LINKEDIN</span>
+            <span class="cc-value">Risky Manuel</span>
+          </a>
+          <a class="contact-card reveal" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">
+            <span class="cc-label">GITHUB</span>
+            <span class="cc-value">ManuelKy08</span>
+          </a>
+          <a class="contact-card reveal" href="https://wa.me/+6285724729600" target="_blank" rel="noopener">
+            <span class="cc-label">WHATSAPP</span>
+            <span class="cc-value">+62 857-2472-9600</span>
+          </a>
+          <a class="contact-card reveal" href="https://t.me/kikikokok9" target="_blank" rel="noopener">
+            <span class="cc-label">TELEGRAM</span>
+            <span class="cc-value">@kikikokok9</span>
+          </a>
+          <a class="contact-card reveal" href="https://facebook.com/ZerooKatekuri" target="_blank" rel="noopener">
+            <span class="cc-label">FACEBOOK</span>
+            <span class="cc-value">ZerooKatekuri</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-line1">© 2026 Risky Manuel Tamba — RR-Sec</p>
+    <p class="footer-line2">root@rr-sec:~# sudo su<span class="blink-b">▊</span></p>
+  </footer>
+
+  <!-- Chat AI widget (from chat-widget.html, restyled) -->
+  <button id="rt-chat-toggle" aria-label="Open AI chat" title="Chat with my AI assistant">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <path d="M9 12l2 2 4-4"></path>
+    </svg>
+  </button>
+
+  <div id="rt-chat-box">
+    <div id="rt-chat-header">Red Team &amp; Bug Bounty Assistant</div>
+    <div id="rt-chat-messages"></div>
+    <div id="rt-chat-input-area">
+      <textarea id="rt-chat-input" rows="1" placeholder="Tanya soal CVE, teknik pentest, dll..." aria-label="Chat message"></textarea>
+      <button id="rt-chat-send">Send</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

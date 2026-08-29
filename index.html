@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────────────────
+  Risky Manuel Tamba — Portfolio v2 (Bug Bounty Hunter / Security Researcher)
+  ─────────────────────────────────────────────────────────────────────────────
+  DEPLOY:
+    • GitHub Pages → push folder ini ke repo lalu aktifkan Pages di Settings.
+    • Local       → buka index.html di browser (font fallback ke system jika offline).
+
+  CHAT AI WIDGET (bagian bawah <body>):
+    • Frontend ada di file ini — diambil dari chat-widget.html.
+    • Backend: worker.js + wrangler.toml (Cloudflare Workers AI, FREE TIER).
+      Deploy: `wrangler deploy` dari folder ini. Pastikan WORKER_URL di
+      script.js menunjuk worker kamu. Tidak ada API key di sisi frontend.
+
+  FILE: index.html + style.css + script.js (self-contained, tanpa foto)
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Risky Manuel Tamba — Bug Bounty Hunter & Security Researcher</title>
+  <meta name="description" content="Risky Manuel Tamba — bug bounty hunter & security researcher from Karawang, Indonesia. IDOR, XSS, SQLi, recon & responsible disclosure." />
+  <meta property="og:title" content="Risky Manuel Tamba — Bug Bounty Hunter" />
+  <meta property="og:description" content="Security researcher focused on web application security & bug bounty hunting. Recognized by CSIRT KAI, responsible disclosure advocate." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Ctext x='7' y='23' font-family='monospace' font-size='18' font-weight='bold' fill='%2316a34a'%3E%26gt;_%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260829b" />
+</head>
+<body>
+
+  <!-- Ambient particle background -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="Home"><span class="brand-symbol">~</span>/risky</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">/about</a></li>
+        <li><a href="#findings">/findings</a></li>
+        <li><a href="#skills">/skills</a></li>
+        <li><a href="#certifications">/cert</a></li>
+        <li><a href="#projects">/projects</a></li>
+        <li><a href="#contact">/contact</a></li>
+      </ul>
+      <div class="nav-status"><span class="led" aria-hidden="true"></span>online</div>
+      <button class="nav-burger" id="nav-burger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="home">
+    <div class="hero-grid">
+      <div class="hero-text reveal">
+        <p class="hero-kicker">$ whoami // rr-sec · karawang · +62</p>
+        <h1 class="hero-name">
+          <span class="hn-line">risky</span>
+          <span class="hn-line hn-grad">manuel</span>
+          <span class="hn-line hn-dim">tamba</span>
+        </h1>
+        <p class="hero-role">bug bounty hunter <span class="sep">/</span> security researcher <span class="sep">/</span> linux practitioner</p>
+        <ul class="chips">
+          <li>NODE:ACTIVE</li>
+          <li>ENC:AES-256</li>
+          <li>SIG:STRONG</li>
+          <li>VPN:ON</li>
+          <li>SECURE</li>
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#findings">view findings</a>
+          <a class="btn btn-ghost" href="#contact">contact me</a>
+        </div>
+      </div>
+
+      <div class="hero-term reveal">
+        <div class="term">
+          <div class="term-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-tabs" id="term-tabs" role="tablist">
+              <button class="term-tab active" data-tab="art" role="tab" aria-selected="true">~/art.txt</button>
+              <button class="term-tab" data-tab="whoami" role="tab" aria-selected="false">~/whoami</button>
+            </span>
+          </div>
+          <div class="term-body">
+            <div class="tab-panel active" id="tab-art" role="tabpanel">
+              <pre class="cat-art" aria-hidden="true">
+        /\_/\
+       ( o.o )   // beep boop
+        > ^ &lt;
+    ─────────────────────
+    alias   : manuelky08
+    handle  : kikikokok
+    node    : rr-sec
+    status  : hunting targets</pre>
+            </div>
+            <div class="tab-panel" id="tab-whoami" role="tabpanel" aria-live="polite">
+              <div id="terminal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <a class="stats reveal" href="https://hack.redlimit.id/profile/kikikokok09" target="_blank" rel="noopener" aria-label="RedLimit CTF profile — rank 5">
+      <div class="stat"><span class="stat-num">#5</span><span class="stat-label">rank · redlimit ctf</span></div>
+      <div class="stat"><span class="stat-num">58</span><span class="stat-label">solves</span></div>
+      <div class="stat"><span class="stat-num">7620</span><span class="stat-label">points</span></div>
+      <div class="stat"><span class="stat-num">44</span><span class="stat-label">repos · github</span></div>
+    </a>
+
+    <a class="scroll-hint" href="#about" aria-label="Scroll to about">scroll ↓</a>
+  </header>
+
+  <main>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 01</span><span class="sec-t">about</span></h2>
+        <div class="about-grid reveal">
+          <div class="about-copy">
+            <p>
+              Self-taught security researcher from Karawang, West Java. I started in
+              computer networking — routers, MikroTik, hardware — and moved into
+              offensive security through bug bounty programs. Today my focus is web
+              application security: finding flaws that matter, then writing reports
+              clear enough for anyone to reproduce.
+            </p>
+            <p>
+              I have reported IDOR, reflected XSS, SQL error disclosure, and
+              QR-code injection issues to Indonesian institutions and received
+              official acknowledgment — including recognition from CSIRT KAI
+              (PT Kereta Api Indonesia). Everything I do runs on one principle:
+              permission first, responsible disclosure always.
+            </p>
+            <p class="about-quote">"I like to work alone, and I love technology. Solitude is true freedom."</p>
+          </div>
+          <div class="about-meta">
+            <div class="kv-row"><span class="kv-key">location</span><span class="kv-val">-6.3021°, 107.3050° — Karawang</span></div>
+            <div class="kv-row"><span class="kv-key">focus</span><span class="kv-val">web security · red team</span></div>
+            <div class="kv-row"><span class="kv-key">education</span><span class="kv-val">SMK Teknik Komputer &amp; Jaringan</span></div>
+            <div class="kv-row"><span class="kv-key">stack</span><span class="kv-val">linux · mikrotik · python</span></div>
+            <div class="kv-row"><span class="kv-key">status</span><span class="kv-val green">● available for programs</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Findings -->
+    <section class="section" id="findings">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 02</span><span class="sec-t">findings</span></h2>
+        <p class="section-note reveal">// curated from public acknowledgments — more in the log · ctf: <a class="note-link" href="https://hack.redlimit.id/profile/kikikokok09" target="_blank" rel="noopener">rank #5 on RedLimit — 58 solves · 7,620 pts</a></p>
+
+        <div class="log reveal">
+          <div class="log-line">
+            <span class="log-date">2025-09-28</span>
+            <span class="log-vuln">IDOR</span>
+            <div class="log-desc">
+              <strong>CSIRT KAI — PT Kereta Api Indonesia (Persero)</strong>
+              <span class="log-sub">Insecure Direct Object Reference on the KAI Bandara web reservation system · officially recognized</span>
+            </div>
+            <span class="log-status ack">ACKNOWLEDGED</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">2025-09-24</span>
+            <span class="log-vuln">XSS</span>
+            <div class="log-desc">
+              <strong>QR Code Injection — mobile browser</strong>
+              <span class="log-sub">Reflected XSS triggered by scanning a crafted QR code; payload executed in mobile browser</span>
+            </div>
+            <span class="log-status ack">REPORTED</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">2025-09-02</span>
+            <span class="log-vuln">XSS / SQLi</span>
+            <div class="log-desc">
+              <strong>Depok city government website</strong>
+              <span class="log-sub">Reflected XSS &amp; SQL error disclosure found Jul 07 · responsible disclosure followed</span>
+            </div>
+            <span class="log-status ack">REPORTED</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">2025-08-28</span>
+            <span class="log-vuln">XSS</span>
+            <div class="log-desc">
+              <strong>tni.mil.id subdomain</strong>
+              <span class="log-sub">Submitted Aug 13 · triaged as duplicate — process and methodology still count</span>
+            </div>
+            <span class="log-status dup">DUPLICATE</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">siloam</span>
+            <span class="log-vuln">IDOR / reward</span>
+            <div class="log-desc">
+              <strong>Siloam Hospitals · siloamhospitals.com</strong>
+              <span class="log-sub">Confirmed issue on the program — <span class="hl">reward acknowledged</span> by the Siloam Hospitals bug bounty program</span>
+            </div>
+            <span class="log-status ack">REWARDED</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">pixabay</span>
+            <span class="log-vuln">XSS</span>
+            <div class="log-desc">
+              <strong>Pixabay · pixabay.com</strong>
+              <span class="log-sub">Submitted via their responsible disclosure — <span class="hl">marked as duplicate</span>, still validated</span>
+            </div>
+            <span class="log-status dup">DUPLICATE</span>
+          </div>
+          <div class="log-line">
+            <span class="log-date">underarmour</span>
+            <span class="log-vuln">self-XSS</span>
+            <div class="log-desc">
+              <strong>Under Armour · support.underarmour.com</strong>
+              <span class="log-sub">Self-XSS on the <span class="code">.help</span>/customer-support subdomain — <span class="hl">out of scope</span> but documented for methodology</span>
+            </div>
+            <span class="log-status oos">OUT OF SCOPE</span>
+          </div>
+          <div class="log-line log-next">
+            <span class="log-date">next…</span>
+            <span class="log-vuln">??</span>
+            <div class="log-desc"><strong>rank #5 on RedLimit CTF</strong><span class="log-sub"><a class="note-link" href="https://hack.redlimit.id/profile/kikikokok09" target="_blank" rel="noopener">58 solves · 7,620 points → view profile ↗</a></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 03</span><span class="sec-t">skills</span></h2>
+        <div class="skills-grid">
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man web-exploitation</h3>
+            <ul class="tag-list">
+              <li>XSS</li><li>SQL Injection</li><li>IDOR</li><li>SSRF</li><li>Open Redirect</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man recon-osint</h3>
+            <ul class="tag-list">
+              <li>Subdomain Enum</li><li>Port Scanning</li><li>Google Dorking</li><li>Shodan</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man tooling</h3>
+            <ul class="tag-list">
+              <li>Burp Suite</li><li>Nmap</li><li>ffuf</li><li>nuclei</li><li>sqlmap</li><li>Wireshark</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man scripting</h3>
+            <ul class="tag-list">
+              <li>Python</li><li>Bash</li><li>JavaScript</li><li>PHP</li><li>SQL</li>
+            </ul>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-cmd">$ man infra-network</h3>
+            <ul class="tag-list">
+              <li>Linux</li><li>MikroTik</li><li>Router &amp; WiFi Mgmt</li><li>Docker</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="section" id="certifications">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 04</span><span class="sec-t">certifications</span></h2>
+        <div class="cert-grid">
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Bug Bounty Hunters · 2025</span>
+            <h3 class="cert-name">Bug Hunter</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">BanyuwangiKab · 2025</span>
+            <h3 class="cert-name">Bug Hunter</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Microsoft · 2024</span>
+            <h3 class="cert-name">Azure AI Fundamentals</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Microsoft · 2024</span>
+            <h3 class="cert-name">Azure Data Fundamentals</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Microsoft · 2024</span>
+            <h3 class="cert-name">Security Fundamentals</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Xcode · 2024</span>
+            <h3 class="cert-name">Ethical Web App Hacking &amp; Security</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Cursa</span>
+            <h3 class="cert-name">Cyber Security</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">ITHB</span>
+            <h3 class="cert-name">Data Privacy in the Digital Age</h3>
+          </article>
+          <article class="cert-card reveal">
+            <span class="cert-issuer">Cursa</span>
+            <h3 class="cert-name">Web Development</h3>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 05</span><span class="sec-t">projects</span></h2>
+        <div class="projects-grid">
+          <article class="project-card reveal">
+            <span class="project-tag">python · tools</span>
+            <h3 class="project-name">toolsRR / toolsR</h3>
+            <p class="project-desc">
+              Assorted Python helper scripts for bug bounty workflow — recon and
+              automation experiments pushed as I learn. 44+ repos on GitHub,
+              mostly me learning in public.
+            </p>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+          <article class="project-card reveal">
+            <span class="project-tag">docker · owasptop10</span>
+            <h3 class="project-name">Web Vuln Lab</h3>
+            <p class="project-desc">
+              Intentionally vulnerable web environment built with Docker for safe,
+              hands-on practice across the OWASP Top 10 — injection flaws to
+              broken access control.
+            </p>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+          <article class="project-card reveal">
+            <span class="project-tag">research · writing</span>
+            <h3 class="project-name">Findings Writeups</h3>
+            <p class="project-desc">
+              Public notes on vulnerabilities I find and report — root cause,
+              impact, and mitigation — written so anyone starting out can follow
+              the thought process.
+            </p>
+            <a class="project-link" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">$ git clone →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container">
+        <h2 class="section-title reveal"><span class="sec-no">§ 06</span><span class="sec-t">contact</span></h2>
+        <p class="section-note reveal">// open for bounty programs, collabs &amp; security work</p>
+        <div class="contact-grid">
+          <a class="contact-card reveal" href="mailto:riskymanuel08@proton.me">
+            <span class="cc-label">email</span>
+            <span class="cc-value">riskymanuel08@proton.me</span>
+          </a>
+          <a class="contact-card reveal" href="https://instagram.com/risky.manuel" target="_blank" rel="noopener">
+            <span class="cc-label">instagram</span>
+            <span class="cc-value">@risky.manuel</span>
+          </a>
+          <a class="contact-card reveal" href="https://www.linkedin.com/in/risky-manuel/" target="_blank" rel="noopener">
+            <span class="cc-label">linkedin</span>
+            <span class="cc-value">risky-manuel</span>
+          </a>
+          <a class="contact-card reveal" href="https://github.com/ManuelKy08/" target="_blank" rel="noopener">
+            <span class="cc-label">github</span>
+            <span class="cc-value">ManuelKy08</span>
+          </a>
+          <a class="contact-card reveal" href="https://wa.me/+6285724729600" target="_blank" rel="noopener">
+            <span class="cc-label">whatsapp</span>
+            <span class="cc-value">+62 857-2472-9600</span>
+          </a>
+          <a class="contact-card reveal" href="https://t.me/kikikokok9" target="_blank" rel="noopener">
+            <span class="cc-label">telegram</span>
+            <span class="cc-value">@kikikokok9</span>
+          </a>
+          <a class="contact-card reveal" href="https://facebook.com/ZerooKatekuri" target="_blank" rel="noopener">
+            <span class="cc-label">facebook</span>
+            <span class="cc-value">ZerooKatekuri</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-line1">© 2026 risky manuel tamba — rr-sec</p>
+    <p class="footer-line2">root@rr-sec:~# sudo su<span class="blink-b">▊</span></p>
+  </footer>
+
+  <!-- Chat AI widget (from chat-widget.html, restyled) -->
+  <button id="rt-chat-toggle" aria-label="Open AI chat" title="Chat with my AI assistant">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+  </button>
+
+  <div id="rt-chat-box">
+    <div id="rt-chat-header">Red Team &amp; Bug Bounty Assistant</div>
+    <div id="rt-chat-messages"></div>
+    <div id="rt-chat-input-area">
+      <textarea id="rt-chat-input" rows="1" placeholder="Tanya soal CVE, teknik pentest, dll..." aria-label="Chat message"></textarea>
+      <button id="rt-chat-send">Send</button>
+    </div>
+  </div>
+
+  <script src="script.js?v=20260829b"></script>
+</body>
+</html>

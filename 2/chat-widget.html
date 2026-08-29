@@ -1,0 +1,209 @@
+<!--
+  Widget Chat AI - Red Team & Bug Bounty Assistant
+  Cara pakai: copy seluruh isi <style> dan <div id="rt-chat-widget"> + <script> ini
+  ke halaman web statis kamu (sebelum tag </body>).
+
+  Jangan lupa ganti WORKER_URL di bagian <script> paling bawah dengan URL worker kamu,
+  contoh: "https://manuelky.rrsecbounty.workers.dev/"
+-->
+
+<style>
+  #rt-chat-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    z-index: 9999;
+  }
+
+  #rt-chat-box {
+    position: fixed;
+    bottom: 96px;
+    right: 24px;
+    width: 360px;
+    max-width: 90vw;
+    height: 480px;
+    max-height: 70vh;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+  }
+
+  #rt-chat-box.open { display: flex; }
+
+  #rt-chat-header {
+    background: #161b22;
+    color: #e6edf3;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #30363d;
+  }
+
+  #rt-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rt-msg {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .rt-msg.user {
+    align-self: flex-end;
+    background: #16a34a;
+    color: #fff;
+  }
+
+  .rt-msg.bot {
+    align-self: flex-start;
+    background: #21262d;
+    color: #e6edf3;
+  }
+
+  .rt-msg.bot.loading {
+    color: #8b949e;
+    font-style: italic;
+  }
+
+  #rt-chat-input-area {
+    display: flex;
+    border-top: 1px solid #30363d;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  #rt-chat-input {
+    flex: 1;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: #e6edf3;
+    padding: 8px 10px;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+  }
+
+  #rt-chat-send {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  #rt-chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
+
+<button id="rt-chat-toggle" title="Buka Chat AI">💬</button>
+
+<div id="rt-chat-box">
+  <div id="rt-chat-header">🛡️ Red Team & Bug Bounty Assistant</div>
+  <div id="rt-chat-messages"></div>
+  <div id="rt-chat-input-area">
+    <textarea id="rt-chat-input" rows="1" placeholder="Tanya soal CVE, teknik pentest, dll..."></textarea>
+    <button id="rt-chat-send">Kirim</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // GANTI dengan URL Cloudflare Worker kamu
+    const WORKER_URL = "https://manuelky.rrsecbounty.workers.dev/";
+
+    const toggleBtn = document.getElementById("rt-chat-toggle");
+    const chatBox = document.getElementById("rt-chat-box");
+    const messagesEl = document.getElementById("rt-chat-messages");
+    const inputEl = document.getElementById("rt-chat-input");
+    const sendBtn = document.getElementById("rt-chat-send");
+
+    let history = []; // {role, content}
+
+    toggleBtn.addEventListener("click", () => {
+      chatBox.classList.toggle("open");
+    });
+
+    function addMessage(role, text, isLoading = false) {
+      const div = document.createElement("div");
+      div.className = "rt-msg " + role + (isLoading ? " loading" : "");
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return div;
+    }
+
+    async function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      history.push({ role: "user", content: text });
+      inputEl.value = "";
+      sendBtn.disabled = true;
+
+      const loadingEl = addMessage("bot", "Sedang mengetik...", true);
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history }),
+        });
+
+        const data = await res.json();
+        loadingEl.remove();
+
+        if (!res.ok || data.error) {
+          addMessage("bot", "⚠️ " + (data.error || "Terjadi kesalahan."));
+          return;
+        }
+
+        addMessage("bot", data.reply);
+        history.push({ role: "assistant", content: data.reply });
+      } catch (err) {
+        loadingEl.remove();
+        addMessage("bot", "⚠️ Gagal terhubung ke server. Coba lagi.");
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  })();
+</script>
