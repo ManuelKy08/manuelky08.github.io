@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Manuel Ky08">
+  <rect width="64" height="64" fill="#171410"/>
+  <path d="M11 46V18l10 14 10-14v28" fill="none" stroke="#f3edde" stroke-width="4" stroke-linejoin="miter"/>
+  <path d="M39 18v28M52 18 39 32l13 14" fill="none" stroke="#f3edde" stroke-width="4" stroke-linejoin="miter"/>
+  <rect x="47" y="47" width="8" height="8" fill="#b03921"/>
+</svg>

@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-11-10T21:55:37+07:00",
+  "reposWithPages": 25,
+  "liveChecked": 25,
+  "http200": 23,
+  "failed": 2,
+  "failedRepos": [
+    {
+      "name": "Buat-dll",
+      "url": "https://manuelky08.github.io/Buat-dll/",
+      "http": 404
+    },
+    {
+      "name": "RiskyStore",
+      "url": "https://manuelky08.github.io/RiskyStore/",
+      "http": 404
+    }
+  ],
+  "excluded": [
+    "manuelky08.github.io"
+  ],
+  "published": 22
+}
